@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+'''
+Reducer to compute the pCTR for ad ID. Uses
+smoothing techniques for better pCTRs.
+
+
+Input: training set
+Output: file of ad id to pCTR
+
+Author: Alan Kao
+'''
+
 from operator import itemgetter
 import sys
 
@@ -21,7 +32,7 @@ for line in sys.stdin:
     else:
         if current_ad_id:
             pCTR = float(int(clicks) + ALPHA * BETA) / (float(int(impressions) + BETA))
-            print '%s\t%s\t%s' % (current_ad_id, pCTR)
+            print '%s\t%s' % (current_ad_id, pCTR)
         clicks = int(click)
         impressions = int(impr)
         current_ad_id = ad_id
@@ -30,4 +41,4 @@ for line in sys.stdin:
 # do not forget to output the last word if needed!
 if current_ad_id == ad_id:
     pCTR = float(int(clicks) + ALPHA * BETA) / (float(int(impressions) + BETA))
-    print '%s\t%s\t%s' % (current_ad_id, pCTR)
+    print '%s\t%s' % (current_ad_id, pCTR)

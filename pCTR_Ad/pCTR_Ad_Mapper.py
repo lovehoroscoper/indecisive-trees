@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+'''
+Mapper to compute the pCTR for ad ID.
+
+Input: training set
+Output: map output to compute pCTR
+
+Author: Alan Kao
+'''
 
 import sys
 

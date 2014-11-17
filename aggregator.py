@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 
+'''
+Aggregator that takes all pre-computed features and
+transforms the input training data into the desired
+feature matrix. Intended to be the reducer, but
+currently runs locally.
+
+Input: training set
+Output: feature matrix
+
+Author: Alan Kao
+'''
+
 PCTR_AD_PATH = ''
 PCTR_ADVERTISER_PATH = ''
 PCTR_QUERY_PATH = ''

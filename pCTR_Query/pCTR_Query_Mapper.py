@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+'''
+Mapper to compute the pCTR for query ID.
+
+Input: training set
+Output: map output to compute pCTR
+
+Author: Anna Zhang
+'''
 
 import sys
 
