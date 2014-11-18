@@ -93,7 +93,6 @@ def cal_doc_similarity(query_id, keyword_id, title_id, description_id):
         result_dictionary_k[key] = idf[key]*tf_k[key]
         result_dictionary_t[key] = idf[key]*tf_t[key]
         result_dictionary_d[key] = idf[key]*tfd[key]
-        return result_dictionary
     sim_q_k = doc_similarity(result_dictionary_q, result_dictionary_k)
     sim_q_t = doc_similarity(result_dictionary_q, result_dictionary_t)
     sim_q_d = doc_similarity(result_dictionary_q, result_dictionary_d)
