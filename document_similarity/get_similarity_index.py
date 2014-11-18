@@ -1,7 +1,8 @@
 from collections import Counter
 import math
 def get_dictionary_of_id_tokens_and_freq(filename):
-    """input takes a file and returns a dictionary with unique id as a key and counter token as values
+    """input: a text file
+        output: a dictionary with unique id as a key and counter token as values
     author: Elizabeth Lee"""
     result_dict ={}
     for line in open(filename):
@@ -18,9 +19,10 @@ dict_keyword = get_dictionary_of_id_tokens_and_freq("purchasedkeywordid_tokensid
 dict_title = get_dictionary_of_id_tokens_and_freq("titleid_tokensid.txt")
 dict_description = get_dictionary_of_id_tokens_and_freq("descriptionid_tokensid.txt")
     
-def get_idf_dictionary(query_dictionary, keyword_dictionary, title_dictionary, descrioption_dictionary):
-    """takes 4 dictionaries that has a form of Counter({'4189': 1, '75': 1, '31': 1}) as input 
-    and returns a dictionary with a token(word) as a key and idf as a value
+def get_idf_dictionary(query_dictionary, keyword_dictionary, title_dictionary, description_dictionary):
+    """
+    input: 4 dictionaries that has a form of Counter({'4189': 1, '75': 1, '31': 1}) 
+    output: a dictionary with a token(word) as a key and idf as a value
     author: Elizabeth Lee"""
     #one idf is needed for each token in all for documents (it can be used for all 4 documents)
     token_set = set()
@@ -38,7 +40,9 @@ def get_idf_dictionary(query_dictionary, keyword_dictionary, title_dictionary, d
         result_dictionary[token] = math.log(float(4)/occurence)
     return result_dictionary
  def tf(dictionary):
-     """calculating term frequency for a dictionary and outputs a term and term frequncy within a dictionary
+     """calculating term frequency for a dictionary
+     input: a dictionary
+     output: a term as a key and term frequncy as value within a dictionary
      Elizabeth Lee"""
     diction = {}
     for tok in dictionary.keys():
@@ -48,8 +52,9 @@ def get_idf_dictionary(query_dictionary, keyword_dictionary, title_dictionary, d
     return diction #{'75': 0.3333333333333333, '1545': 0.3333333333333333, '31': 0.3333333333333333}
 
 def doc_similarity(vec1_dic, vec2_dic):
-    """ calculates cosine similarity between two documents takes dictionaries as inputs
-    and output a single number
+    """ calculates cosine similarity between two documents 
+    input: two dictionaries with a term as key and tf-idf as values 
+    output: a single number
     author : Elizabeth Lee"""
     denom = []
     num = []
@@ -62,8 +67,9 @@ def doc_similarity(vec1_dic, vec2_dic):
     return float(sum(num))/float(sum(denom))
             
 def cal_doc_similarity(query_id, keyword_id, title_id, description_id):
-    """calculate a document similarity between query and keyword,
-    query and title, query and description and returns a average of three
+    """calculate a document similarity between query and keyword, query and title, query and description 
+    input: query_id, keyword_id, title_id, description_id from a line in training.txt
+    ouput: average of cosine similarities for each pair
     author: Elizabeth Lee"""
     tokens_counts_query = dict_query[query_id] #dict_query[query_id] gives a dictionary of each token and the number of tokens in a query
     tokens_counts_keyword = dict_keyword[keyword_id] #Counter({'75': 1, '1545': 1, '31': 1})
