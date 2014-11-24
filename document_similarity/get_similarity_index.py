@@ -1,30 +1,38 @@
 from collections import Counter
+import linecache
 import math
-def get_dictionary_of_id_tokens_and_freq(filename):
-    """ input: a text file
-        output: a dictionary with unique id as a key and counter token as values
-        Example:
-         {'1': Counter({'75': 1, '1545': 1, '31': 1}), '0': Counter({'12731': 1})}
-    author: Elizabeth Lee"""
-    result_dict ={}
-    for line in open(filename):
-        line = line.strip()
-        id, token_list = line.split("\t", 1)
-        token_list = token_list.split("|")
-        result_dict[id] = Counter(token_list)
-    return result_dict
 
-dict_query = get_dictionary_of_id_tokens_and_freq('queryid_tokensid.txt')
-dict_keyword = get_dictionary_of_id_tokens_and_freq("purchasedkeywordid_tokensid.txt")
-dict_title = get_dictionary_of_id_tokens_and_freq("titleid_tokensid.txt")
-dict_description = get_dictionary_of_id_tokens_and_freq("descriptionid_tokensid.txt")
-    
+def get_counter(mem_file, file_id):
+    line = linecache.getline(mem_file, file_id + 1)
+    line = line.strip()
+    file_id, token_list = line.split("\t")
+    token_list = token_list.split("|")
+    #maybe do some checking with ids here
+    return Counter(token_list)
+
+def get_query_count(query_id):
+    c = get_counter(m_query, int(query_id))
+    return sum(c.values())
+
+def get_keyword_count(keyword_id):
+    c = get_counter(m_keyword, int(keyword_id))
+    return sum(c.values())
+
+def get_title_count(title_id):
+    c = get_counter(m_title, int(title_id))
+    return sum(c.values())
+
+def get_description_count(desc_id):
+    c = get_counter(m_description, int(desc_id))
+    return sum(c.values())
+
 def get_idf_dictionary(query_dictionary, keyword_dictionary, title_dictionary, description_dictionary):
     """
     one idf(inverse document frequency) is needed for each token in all for documents (it can be used for all 4 documents)
     input: 4 dictionaries that has a form of Counter({'4189': 1, '75': 1, '31': 1}) 
     output: a dictionary with a token(word) as a key and idf as a value
-    author: Elizabeth Lee"""
+    author: Elizabeth Lee
+    """
     token_set = set()
     token_set.update(query_dictionary.keys())
     token_set.update(keyword_dictionary.keys())
@@ -33,69 +41,62 @@ def get_idf_dictionary(query_dictionary, keyword_dictionary, title_dictionary, d
     result_dictionary = {}
     for token in token_set:
         occurence = 0
-        occurence += token in query_dictionary
-        occurence += token in keyword_dictionary
-        occurence += token in title_dictionary
-        occurence += token in description_dictionary
+        occurence += (token in query_dictionary)
+        occurence += (token in keyword_dictionary)
+        occurence += (token in title_dictionary)
+        occurence += (token in description_dictionary)
         result_dictionary[token] = math.log(float(4)/occurence)
     return result_dictionary
- def tf(dictionary):
-     """calculating term frequency for a dictionary
-     input: a dictionary
-     output: a term as a key and term frequncy as value within a dictionary
-     Elizabeth Lee"""
-    diction = {}
-    for tok in dictionary.keys():
-        tok_num = dictionary[tok]
-        tf = tok_num/float(len(dictionary.keys()))
-        diction[tok] = tf
-    return diction #{'75': 0.3333333333333333, '1545': 0.3333333333333333, '31': 0.3333333333333333}
 
-def doc_similarity(vec1_dic, vec2_dic):
-    """ calculates cosine similarity between two documents 
-    input: two dictionaries with a term as key and tf-idf as values 
-    output: a single number
-    author : Elizabeth Lee"""
-    denom = []
-    num = []
-    for key in vec1_dic.keys() and vec2_dic.keys():
-        denom.append(vec1_dic[key]**2)
-        denom.append(vec2_dic[key]**2)        
-    for key in vec1_dic.keys():
-        if key in vec2_dic.keys():
-            num.append(vec1_dic[key]*vec2_dic[key])
-    return float(sum(num))/float(sum(denom))
-            
+def get_similarity(query_weights, doc_weights):
+    numerator = 0
+    for token in query_weights:
+        if token not in doc_weights:
+            continue
+        numerator += (query_weights[token] + doc_weights[token])
+    q_v = math.sqrt(sum([i ** 2 for i in query_weights.values()]))
+    d_v = math.sqrt(sum([i ** 2 for i in doc_weights.values()]))
+    denom = q_v * d_v
+    return float(numerator) / denom
+
+def get_weights(dict_counter, idf_dict):
+    count = sum(dict_counter.values())
+    result = {}
+    for token in dict_counter:
+        if token not in idf_dict:
+            continue
+        result[token] = (dict_counter[token] / float(count)) * idf_dict[token]
+    return result
+
 def cal_doc_similarity(query_id, keyword_id, title_id, description_id):
-    """calculate a document similarity between query and keyword, query and title, query and description 
+    """
+    calculate a document similarity between query and keyword, query and title, query and description 
     input: query_id, keyword_id, title_id, description_id from a line in training.txt
     ouput: average of cosine similarities for each pair
-    author: Elizabeth Lee"""
-    tokens_counts_query = dict_query[query_id] #dict_query[query_id] gives a dictionary of each token and the number of tokens in a query
-    tokens_counts_keyword = dict_keyword[keyword_id] #Counter({'75': 1, '1545': 1, '31': 1})
-    tokens_counts_title = dict_title[title_id]
-    tokens_counts_description = dict_description[description_id]
-    tokens_q = token_counts.query.keys() #['75', '1545', '31']
-    tokens_k = token_counts.keyword.keys()
-    tokens_t = token_counts.title.keys()
-    tokens_d = token_counts.description.keys()
-    idf = get_idf_dictionary(tokens_counts_query, tokens_counts_keyword, tokens_counts_title, tokens_counts_description)
-    tf_q = tf(tokens_counts_query)
-    tf_k = tf(tokens_counts_query)
-    tf_t = tf(tokens_counts_query)
-    tf_d = tf(tokens_counts_query)#{'75': 0.3333333333333333, '1545': 0.3333333333333333, '31': 0.3333333333333333}
-    result_dictionary_q ={} # 'token': tf*idf
-    result_dictionary_k ={}
-    result_dictionary_t ={}
-    result_dictionary_d ={}
-    for key in idf.keys() and tf_q.keys():
-        result_dictionary_q[key] = idf[key]*tf_q[key]
-        result_dictionary_k[key] = idf[key]*tf_k[key]
-        result_dictionary_t[key] = idf[key]*tf_t[key]
-        result_dictionary_d[key] = idf[key]*tfd[key]
-    sim_q_k = doc_similarity(result_dictionary_q, result_dictionary_k)
-    sim_q_t = doc_similarity(result_dictionary_q, result_dictionary_t)
-    sim_q_d = doc_similarity(result_dictionary_q, result_dictionary_d)
-    return (sim_q_k + sim_q_t + sim_q_d) / 3
+    author: Elizabeth Lee
+    """
+    m_query = "queryid_tokensid.txt"
+    m_keyword = "purchasedkeywordid_tokensid.txt"
+    m_title = "titleid_tokensid.txt"
+    m_description = "descriptionid_tokensid.txt"
 
+    # counter objects of tokens to counts
+    tokens_counts_query = get_counter(m_query, int(query_id)) #dict_query[query_id] gives a dictionary of each token and the number of tokens in a query
+    tokens_counts_keyword = get_counter(m_keyword, int(keyword_id))
+    tokens_counts_title = get_counter(m_title, int(title_id))
+    tokens_counts_description = get_counter(m_description, int(description_id))
+
+    # dictionary of token to idf values
+    idf = get_idf_dictionary(tokens_counts_query, tokens_counts_keyword, tokens_counts_title, tokens_counts_description)
+
+    query_weights = get_weights(tokens_counts_query, idf)
+    keyword_weights = get_weights(tokens_counts_keyword, idf)
+    title_weights = get_weights(tokens_counts_title, idf)
+    desc_weights = get_weights(tokens_counts_description, idf)
+
+    sim_q_k = get_similarity(query_weights, keyword_weights)
+    sim_q_t = get_similarity(query_weights, title_weights)
+    sim_q_d = get_similarity(query_weights, desc_weights)
+    result = (sim_q_k + sim_q_t + sim_q_d) / 3.0
+    return result
 
