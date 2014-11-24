@@ -87,25 +87,31 @@ for line in sys.stdin:
 
     if (len(fields) != 12):
     	continue
-    ad_id = fields[3]
-    advertiser_id = fields[4]
-    keyword_id = fields[8]
-    title_id = fields[9]
-    desc_id = fields[10]
-    query_id = fields[7]
-    user_id = fields[11]
+    ad_id = None
+    advertiser_id = None
+    keyword_id = None
+    title_id = None
+    desc_id = None
+    query_id = None
+    user_id = None
 
+    try:
+        ad_id = int(fields[3])
+        advertiser_id = int(fields[4])
+        keyword_id = int(fields[8])
+        title_id = int(fields[9])
+        desc_id = int(fields[10])
+        query_id = int(fields[7])
+        user_id = int(fields[11])
+    except ValueError:
+        continue
     ctr = 0
-    val_user = 0
-    val_query = 0
     val_pos = 0
     val_depth = 0
     val_quartile = 0
 
     try:
     	ctr = float(fields[0]) / float(fields[1])
-    	val_user = int(user_id)
-    	val_query = int(query_id)
     	val_pos = int(fields[6])
     	val_depth = int[fields[5]]
     	if val_depth != 0:
@@ -147,7 +153,7 @@ for line in sys.stdin:
     	gender[cur_user_data[0]] = 1
     	age[cur_user_data[1]] = 1
 
-    print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (ctr, val_user, val_query, val_pos, val_depth, val_quartile, \
+    print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (ctr, user_id, query_id, val_pos, val_depth, val_quartile, \
     	cur_pctr_ad, cur_pctr_advertiser, cur_pctr_query, cur_pctr_user, cur_num_query, cur_num_title, cur_num_desc, cur_num_keyword \
     	gender[0], gender[1], gender[2], age[0], age[1], age[2], age[3], age[4], age[5])
 

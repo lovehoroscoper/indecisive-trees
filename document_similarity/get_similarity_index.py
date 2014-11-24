@@ -11,19 +11,19 @@ def get_counter(mem_file, file_id):
     return Counter(token_list)
 
 def get_query_count(query_id):
-    c = get_counter(m_query, int(query_id))
+    c = get_counter(m_query, query_id)
     return sum(c.values())
 
 def get_keyword_count(keyword_id):
-    c = get_counter(m_keyword, int(keyword_id))
+    c = get_counter(m_keyword, keyword_id)
     return sum(c.values())
 
 def get_title_count(title_id):
-    c = get_counter(m_title, int(title_id))
+    c = get_counter(m_title, title_id)
     return sum(c.values())
 
 def get_description_count(desc_id):
-    c = get_counter(m_description, int(desc_id))
+    c = get_counter(m_description, desc_id)
     return sum(c.values())
 
 def get_idf_dictionary(query_dictionary, keyword_dictionary, title_dictionary, description_dictionary):
@@ -81,10 +81,10 @@ def cal_doc_similarity(query_id, keyword_id, title_id, description_id):
     m_description = "descriptionid_tokensid.txt"
 
     # counter objects of tokens to counts
-    tokens_counts_query = get_counter(m_query, int(query_id)) #dict_query[query_id] gives a dictionary of each token and the number of tokens in a query
-    tokens_counts_keyword = get_counter(m_keyword, int(keyword_id))
-    tokens_counts_title = get_counter(m_title, int(title_id))
-    tokens_counts_description = get_counter(m_description, int(description_id))
+    tokens_counts_query = get_counter(m_query, query_id) #dict_query[query_id] gives a dictionary of each token and the number of tokens in a query
+    tokens_counts_keyword = get_counter(m_keyword, keyword_id)
+    tokens_counts_title = get_counter(m_title, title_id)
+    tokens_counts_description = get_counter(m_description, description_id)
 
     # dictionary of token to idf values
     idf = get_idf_dictionary(tokens_counts_query, tokens_counts_keyword, tokens_counts_title, tokens_counts_description)
