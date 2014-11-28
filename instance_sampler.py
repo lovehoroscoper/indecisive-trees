@@ -3,7 +3,7 @@
 import random
 from os import sys
 
-PERCENTAGE = 0.12
+PERCENTAGE = 0.20
 
 for line in sys.stdin:
     line = line.strip()
@@ -17,7 +17,7 @@ for line in sys.stdin:
     except ValueError:
     	continue
 
-    if impressions == 0:
+    if impressions == 0 or clicks == 0:
     	continue
 
     try:

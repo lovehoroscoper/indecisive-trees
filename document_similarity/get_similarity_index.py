@@ -75,7 +75,7 @@ def cal_doc_similarity(query_id, keyword_id, title_id, description_id):
     ouput: average of cosine similarities for each pair
     author: Elizabeth Lee
     """
-    m_query = "queryid_tokensid.txt"
+    m_query = "querydb"
     m_keyword = "purchasedkeywordid_tokensid.txt"
     m_title = "titleid_tokensid.txt"
     m_description = "descriptionid_tokensid.txt"
