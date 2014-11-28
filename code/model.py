@@ -50,10 +50,12 @@ for c in Cs:
 print Cs
 print aucs
 print 'creating best model'
-model = create_model(X, Y, Cs[aucs.index(max(aucs))])
+best_c = Cs[aucs.index(max(aucs))]
+model = create_model(X, Y, best_c)
 save_model(model)
 
 auc = validate(model, v_X, v_Y)
 correct = score(model, v_X, v_Y)
+print 'best c: ' + str(best_c)
 print 'best auc: ' + str(auc)
 print 'best score:' + str(correct)
