@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 
+'''
+Author: Alan Kao
+
+Performs instance sampling on the raw training set. Sessions
+with no clicks are ignored. Also splits the instances into
+positive and negative instances accordingly.
+
+Input: PERCENTAGE - likelihood of choosing an instance
+       training - Training data to be passed in via stdin
+Output: samples - sampled data with an additional pos/neg attr
+'''
+
 import random
 from os import sys
 

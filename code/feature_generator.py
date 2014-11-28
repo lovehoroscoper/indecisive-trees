@@ -3,15 +3,13 @@
 from os import sys
 from collections import Counter
 import math
-import time
 
 '''
-Aggregator that takes all pre-computed features and
-transforms the input training data into the desired
-feature matrix. Intended to be the reducer, but
-currently runs locally.
+Feature generator that aggregates/generates features desired
+for model training, and outputs model usable training data.
 
-Input: training set
+Input: pre-computed feature sets - see *PATH descriptions below
+       training - main training data
 Output: feature matrix
 
 Author: Alan Kao
@@ -28,7 +26,8 @@ TITLE_TOK_PATH = 'titleid_tokensid.txt'
 KEYWORD_TOK_PATH = 'purchasedkeywordid_tokensid.txt'
 
 USER_DATA_PATH = 'userid_profile.txt'
-INPUT_PATH = 'training2.txt'
+INPUT_PATH = 'training3.txt'
+OUTPUT_PATH = 'agg_output2.txt'
 
 def load_pctr(path):
     ret = {}
@@ -87,16 +86,25 @@ def preprocess():
 
     global user_data
 
+    print 'starting pctr ad'
     pCTR_Ad = load_pctr(PCTR_AD_PATH)
+    print 'starting pctr advertiser'
     pCTR_Advertiser = load_pctr(PCTR_ADVERTISER_PATH)
+    print 'starting pctr query'
     pCTR_Query = load_pctr(PCTR_QUERY_PATH)
+    print 'starting pctr user'
     pCTR_User = load_pctr(PCTR_USER_PATH)
 
+    print 'starting desc tokens'
     desc_token = load_docs(DESC_TOK_PATH)
+    print 'starting keyword tokens'
     keyword_token = load_docs(KEYWORD_TOK_PATH)
+    print 'starting query tokens'
     query_token = load_docs(QUERY_TOK_PATH)
+    print 'starting title tokens'
     title_token = load_docs(TITLE_TOK_PATH)
 
+    print 'starting user data'
     user_data = load_user_data(USER_DATA_PATH)
 
 def get_user_data(user_id):
@@ -200,9 +208,12 @@ def cal_doc_similarity(query_id, keyword_id, title_id, description_id):
     result = (sim_q_k + sim_q_t + sim_q_d) / 3.0
     return result
 
+print 'starting preprocess'
 preprocess()
+print 'preprocess complete'
 
 i = open(INPUT_PATH, 'r')
+o = open(OUTPUT_PATH, 'w+')
 for line in i:
     line = line.strip()
     fields = line.split('\t')
@@ -251,13 +262,14 @@ for line in i:
         num_string = '%s\t%s\t%s\t%s' % (cur_num_query, cur_num_title, cur_num_desc, cur_num_keyword)
         gender_string = '%s\t%s\t%s' % (gender[0], gender[1], gender[2])
         age_string = '%s\t%s\t%s\t%s\t%s\t%s' % (age[0], age[1], age[2], age[3], age[4], age[5])
-        print str(label) + '\t' + val_string + '\t' + pctr_string + '\t' + num_string + '\t' + gender_string + '\t' + age_string
+        o.write(str(label) + '\t' + val_string + '\t' + pctr_string + '\t' + num_string + '\t' + gender_string + '\t' + age_string + '\n')
     except ValueError:
-        print 'val error'
         continue
     except KeyError:
-        print 'key error'
         continue
+i.close()
+o.flush()
+o.close()
 
 
 
