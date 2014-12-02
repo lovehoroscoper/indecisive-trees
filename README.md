@@ -26,4 +26,4 @@ Best CV AUC: 0.955342265923
 Best CV Score: 0.884433622533
 
 ### Notes
-Output from (2) and (6) can be found online in Alan Kao's S3 directory, under the folder "Final Projects". It is also recommended that the individual file descriptions/code be read for further details.
+Output from (2), (3) and (6) can be found online in Alan Kao's S3 directory, under the folder "Final Projects". It is also recommended that the individual file descriptions/code be read for further details.
